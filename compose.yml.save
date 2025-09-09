@@ -1,0 +1,183 @@
+version: '3.8'
+
+services:
+#DEV Drupal(Apache) + MySQL
+  drupal:
+    image: drupal:10-apache
+    container_name: drupal_dev
+    restart: always
+    volumes:
+      - devData:/var/www/html/
+    ports:
+      - 8080:80
+    dns:
+      - 172.20.0.6
+    networks:
+      development_net:
+        ipv4_address: 172.40.0.5
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    restart: always
+    volumes:
+      - devdb:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    dns:
+      - 172.20.0.6
+    networks:
+      development_net:
+        ipv4_address: 172.40.0.6
+
+#------------------------------------------------------------#
+
+#WIP PROD NGINX + POSTGRES
+  nginxProd:
+    image: 'bitnami/nginx:latest'
+    container_name: nginxprod
+    restart: always
+    volumes:
+      - ./Production/server-block.conf:/opt/bitnami/nginx/conf/server_blocks/server-block.conf  # Configuración de Nginx
+      - prodData:/app
+    ports:
+      - 8081:80
+    dns:
+      - 172.20.0.6
+    networks:
+      production_net:
+        ipv4_address: 172.30.0.5
+    depends_on:
+      - phpfpm1
+      - phpfpm2
+      - postgresql
+
+  phpfpm1:
+    image: 'bitnami/php-fpm:latest'
+    container_name: phpfpm1
+    restart: always
+    entrypoint: bash /drupalinit.sh
+    volumes:
+      - ./Production/drupalinit.sh:/drupalinit.sh
+      - ./Production/php.ini:/opt/bitnami/php/etc/php.ini
+      - prodData:/app
+    environment:
+      - PHP_ENABLE_OPCACHE=1
+    dns:
+      - 172.20.0.6
+    networks:
+      production_net:
+        ipv4_address: 172.30.0.6
+    depends_on:
+      - postgresql
+
+  phpfpm2:
+    image: 'bitnami/php-fpm:latest'
+    container_name: phpfpm2
+    restart: always
+    volumes:
+      - ./Production/php.ini:/opt/bitnami/php/etc/php.ini
+      - prodData:/app
+    environment:
+      - PHP_ENABLE_OPCACHE=1
+    dns:
+      - 172.20.0.6
+    networks:
+      production_net:
+        ipv4_address: 172.30.0.7
+    depends_on:
+      - postgresql
+
+  postgresql:
+    image: 'bitnami/postgresql:latest'
+    container_name: postgresql
+    restart: always
+    volumes:
+      - proddb:/bitnami/postgresql
+    environment:
+      - POSTGRESQL_DATABASE=drupal
+      - POSTGRESQL_USERNAME=drupal
+      - POSTGRESQL_PASSWORD=password
+    dns:
+      - 172.20.0.6 
+    networks:
+      production_net:
+        ipv4_address: 172.30.0.8
+
+#------------------------------------------------------------#
+
+# NAS + DNS
+  nasServ:
+    image: debian:latest
+    container_name: nasserv
+    restart: always
+    command: bash ./backups/startup.sh
+    environment:
+      MYSQL_ROOT_PASSWORD: password           # Contraseña de MySQL
+      POSTGRES_PASSWORD: postgrespassword         # Contraseña de PostgreSQL
+    volumes:
+      - ./nas_data/backups:/backups               # Monta el directorio de copias de seguridad
+    networks:
+      services_net:
+        ipv4_address: 172.20.0.5
+    tty: true
+
+  bind9:
+    image: internetsystemsconsortium/bind9:9.20
+    container_name: bind9
+    dns:
+      - 172.20.0.6
+    restart: always
+    volumes:
+      - ./bind/config:/etc/bind                   # Configuración principal
+      - ./bind/config/zones:/etc/bind/zones       # Archivos de zona
+      - dnscache:/var/cache/bind                  # Caché y directorio de trabajo
+      - dnslogs:/var/log                          # Logs
+    environment:
+      - TZ=Europe/Madrid
+    networks:
+      services_net:
+        ipv4_address: 172.20.0.6
+
+#------------------------------------------------------------#
+
+networks:
+  services_net:
+    driver: macvlan
+    driver_opts:
+      parent: ens20
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
+  production_net:
+    driver: macvlan
+    driver_opts:
+      parent: ens19
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+          gateway: 172.30.0.1
+  development_net:
+    driver: macvlan
+    driver_opts:
+      parent: ens18
+    ipam:
+      config:
+        - subnet: 172.40.0.0/24
+          gateway: 172.40.0.1
+
+#------------------------------------------------------------#
+
+volumes:
+  devData:
+  devdb:
+  prodData:
+  proddb:
+  dnscache:
+  dnslogs:

@@ -1,0 +1,13 @@
+$TTL 86400
+@   IN  SOA ns.prod.local. admin.prod.local. (
+        2025031701 ; Serial (modifica este valor cada vez que actualices la zona)
+        3600       ; Refresh
+        1800       ; Retry
+        604800     ; Expire
+        86400      ; Minimum TTL
+)
+    IN  NS ns.svc.local.
+@   IN  A 172.30.0.5     ; prod.local
+w1  IN  A 172.30.0.6	 ; w1.prod.local
+w2  IN  A 172.30.0.7	 ; w2.prod.local
+db  IN  A 172.30.0.8     ; db.prod.local

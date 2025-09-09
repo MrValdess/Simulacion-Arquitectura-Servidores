@@ -1,0 +1,11 @@
+$TTL 86400
+@   IN  SOA ns.dev.local. admin.dev.local. (
+        2025031701
+        3600
+        1800
+        604800
+        86400
+)
+    IN  NS ns.svc.local.
+5   IN  PTR dev.local.
+6  IN  PTR bd.dev.local.

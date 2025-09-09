@@ -1,0 +1,14 @@
+options {
+    directory "/var/cache/bind";
+
+    recursion yes;            // Habilita la resolución recursiva
+    allow-query { any; };      // Permite consultas desde cualquier IP
+    forwarders {
+        8.8.8.8;              // Google DNS
+        1.1.1.1;              // Cloudflare DNS
+    };
+
+    dnssec-validation auto;
+    auth-nxdomain no;         // No autoritativo para dominios inexistentes
+    listen-on { any; };
+};
