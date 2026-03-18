@@ -17,6 +17,11 @@ services:
         ipv4_address: 172.40.0.5
     depends_on:
       - mysql
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.drupal.rule=Host(`dev.localhost`)"
+      - "traefik.http.routers.drupal.service=drupal"
+      - "traefik.http.services.drupal.loadbalancer.server.port=80"
 
   mysql:
     image: mysql
@@ -112,22 +117,6 @@ services:
 #------------------------------------------------------------#
 
 # NAS + DNS
-  nasServ:
-    image: debian:latest
-    container_name: nasserv
-    restart: always
-    command: bash ./backups/startup.sh
-    environment:
-      MYSQL_ROOT_PASSWORD: password           # Contraseña de MySQL
-      POSTGRES_PASSWORD: postgrespassword         # Contraseña de PostgreSQL
-    volumes:
-      - ./nas_data/backups:/backups               # Monta el directorio de copias de seguridad
-    dns:
-      - 172.20.0.6
-    networks:
-      services_net:
-        ipv4_address: 172.20.0.5
-    tty: true
 
   bind9:
     image: internetsystemsconsortium/bind9:9.20
@@ -157,13 +146,14 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - PUBLIC_KEY_FILE=/ssh/development/keys/id_rsa.pub 
-      - PUBLIC_KEY_DIR=/ssh/development/keys
+      - PUBLIC_KEY_FILE=/config/keys/id_rsa.pub 
+      - PUBLIC_KEY_DIR=/config/keys
       - SUDO_ACCESS=false
       - PASSWORD_ACCESS=false 
       - LOG_STDOUT=true
     volumes:
-      - ./ssh/development/ssh1.config:/config
+      - ./ssh/development/ssh1.config:/config/sshd_config
+      - ./ssh/development/keys:/config/keys
     networks:
       development_net:
         ipv4_address: 172.40.0.10
@@ -181,39 +171,49 @@ services:
       - USER_PASSWORD=supersecreto
       - LOG_STDOUT=true
     volumes:
-      - ./ssh/service/ssh2.config:/config
+      - ./ssh/service/ssh2.config:/config/sshd_config
       - ./ssh/service/authorized_keys:/config/ssh/authorized_keys
     networks:
       services_net:
         ipv4_address: 172.20.0.10   # IP fija dentro de la red de servicios
-    restart: unless-stopped
+    restart: unless-stopped   
+  
+# Firewall WIP
+  firewall:
+    image: alpine:latest
+    container_name: firewall_sim
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./firewall.sh:/firewall.sh
+    networks:
+      development_net:
+        ipv4_address: 172.40.0.15
+      production_net:
+        ipv4_address: 172.30.0.15
+      services_net:
+        ipv4_address: 172.20.0.15
+    command: sh /firewall.sh
+
 #------------------------------------------------------------#
 
 networks:
   services_net:
-    driver: macvlan
-    driver_opts:
-      parent: ens20
+    driver: bridge
     ipam:
       config:
         - subnet: 172.20.0.0/24
-          gateway: 172.20.0.1
   production_net:
-    driver: macvlan
-    driver_opts:
-      parent: ens19
+    driver: bridge
     ipam:
       config:
         - subnet: 172.30.0.0/24
-          gateway: 172.30.0.1
   development_net:
-    driver: macvlan
-    driver_opts:
-      parent: ens18
+    driver: bridge
     ipam:
       config:
         - subnet: 172.40.0.0/24
-          gateway: 172.40.0.1
 
 #------------------------------------------------------------#
 
