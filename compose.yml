@@ -181,12 +181,12 @@ services:
 # Firewall WIP
   firewall:
     image: alpine:latest
-    container_name: firewall_sim
+    container_name: firewall
     restart: always
     cap_add:
       - NET_ADMIN
     volumes:
-      - ./firewall.sh:/firewall.sh
+      - ./firewall/startup.sh:/firewall.sh
     networks:
       development_net:
         ipv4_address: 172.40.0.15
