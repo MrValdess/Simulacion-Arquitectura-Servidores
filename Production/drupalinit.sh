@@ -11,6 +11,7 @@ if [ ! -d "/app/web" ]; then
     echo "Proyecto Drupal creado"
 else
     echo "Proyecto Drupal encontrado, no se requiere instalacion. Continuando..."
+    apt update
 fi
 
 useradd -m -s /bin/bash johndoe

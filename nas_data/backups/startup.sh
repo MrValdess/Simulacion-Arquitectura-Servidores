@@ -28,7 +28,7 @@ EOF
 # Crear el archivo de contraseñas para rsync
 echo "Creando archivo de contraseñas..."
 cat <<EOF | tee /etc/rsyncd.secrets
-johndoe:uca2025
+johndoe:uca2026
 EOF
 
 # Cambiar los permisos del archivo de contraseñas para asegurar que solo root pueda leerlo
