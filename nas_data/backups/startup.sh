@@ -3,6 +3,7 @@
 # Actualizar el sistema e instalar rsync si no está instalado
 echo "Actualizando el sistema e instalando rsync"
 apt update && apt install -y rsync
+apt install -y net-tools
 
 # Crear el archivo de configuración de rsync
 echo "Creando archivo de configuración de rsync..."
@@ -37,7 +38,7 @@ chmod -R 777 /backups
 
 # Iniciar el servicio rsync de manera manual (sin usar systemd)
 echo "Iniciando rsync..."
-rsync --daemon --no-detach
+rsync --daemon --no-detach --config=/etc/rsyncd.conf
 
 # Verificar que el puerto 873 está en escucha
 echo "Verificando si rsync está escuchando en el puerto 873..."
