@@ -38,7 +38,7 @@ chmod -R 777 /backups
 
 # Iniciar el servicio rsync de manera manual (sin usar systemd)
 echo "Iniciando rsync..."
-rsync --daemon --no-detach --config=/etc/rsyncd.conf
+rsync --daemon --no-detach
 
 # Verificar que el puerto 873 está en escucha
 echo "Verificando si rsync está escuchando en el puerto 873..."
