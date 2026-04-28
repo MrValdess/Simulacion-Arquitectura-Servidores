@@ -12,6 +12,8 @@ services:
       - 8080:80
     dns:
       - 172.20.0.6
+    extra_hosts:
+      - "dev.local:172.40.0.5"
     networks:
       development_net:
         ipv4_address: 172.40.0.5
@@ -54,6 +56,10 @@ services:
       - 8081:80
     dns:
       - 172.20.0.6
+    extra_hosts:
+      - "prod.local:172.30.0.5"
+      - "ns1.svc.local:172.20.0.6"
+      - "svc.local:172.20.0.6"
     networks:
       production_net:
         ipv4_address: 172.30.0.5
@@ -107,6 +113,9 @@ services:
     container_name: bind9
     dns:
       - 172.20.0.6
+    dns_search:
+      - svc.local
+      - dev.local
     restart: always
     volumes:
       - ./bind/config:/etc/bind                   # Configuración principal

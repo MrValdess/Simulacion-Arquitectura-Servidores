@@ -1,11 +1,11 @@
 $TTL 86400
-@   IN  SOA ns.dev.local. admin.dev.local. (
+@   IN  SOA ns1.svc.local. admin.dev.local. (
         2025031701
         3600
         1800
         604800
-        86400
-)
-    IN  NS ns.svc.local.
-@   IN  A 172.40.0.5     ; dev.local
-bd  IN  A 172.40.0.6     ; bd.dev.local
+        86400 )
+@   IN  NS ns1.svc.local.
+ns1 IN  A 172.20.0.6
+@   IN  A 172.40.0.5
+bd  IN  A 172.40.0.6

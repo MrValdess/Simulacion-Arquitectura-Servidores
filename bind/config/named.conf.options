@@ -11,4 +11,6 @@ options {
     dnssec-validation auto;
     auth-nxdomain no;         // No autoritativo para dominios inexistentes
     listen-on { any; };
+    listen-on-v6 { any; };
+
 };
