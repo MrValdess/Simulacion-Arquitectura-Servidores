@@ -8,6 +8,7 @@ DEV_NET="172.40.0.0/24"
 PROD_NET="172.30.0.0/24"
 SVC_NET="172.20.0.0/24"
 DNS_IP="172.20.0.6"
+VPN_NET="172.10.0.0/24"
 
 echo "[+] Limpiando reglas..."
 iptables -F
@@ -59,6 +60,11 @@ iptables -A FORWARD -s $PROD_NET -d $DEV_NET -j DROP
 echo "[+] Salida HTTP/HTTPS..."
 iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+
+echo "[+] Reglas de VPN..."
+iptables -A FORWARD -s $VPN_NET -d $DEV_NET -j ACCEPT
+iptables -A FORWARD -s $VPN_NET -d $SVC_NET -j ACCEPT
+iptables -A FORWARD -s $VPN_NET -d $PROD_NET -j ACCEPT
 
 # Pruebas PING
 echo "[+] Permitir ICMP (ping para testing)..."
