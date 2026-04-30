@@ -61,6 +61,7 @@ echo "[+] Salida HTTP/HTTPS..."
 iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
 iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
 
+#VPN
 echo "[+] Reglas de VPN..."
 iptables -A FORWARD -s $VPN_NET -d $DEV_NET -j ACCEPT
 iptables -A FORWARD -s $VPN_NET -d $SVC_NET -j ACCEPT

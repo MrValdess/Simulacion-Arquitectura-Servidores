@@ -200,7 +200,7 @@ services:
     ports:
       - "1194:1194/udp"
     volumes:
-      - ./vpn/ovpn-data:/etc/openvpn
+      - ovpndata:/etc/openvpn
       - ./vpn/start.sh:/start.sh
     entrypoint: ["/bin/sh", "/start.sh"]
     restart: always
@@ -242,3 +242,4 @@ volumes:
   proddb:
   dnscache:
   dnslogs:
+  ovpndata:
