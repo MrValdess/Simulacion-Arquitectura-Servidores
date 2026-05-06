@@ -10,7 +10,7 @@ if [ ! -f "$OVPN_DIR/openvpn.conf" ]; then
     echo "[+] Primera ejecución: generando configuración..."
 
     ovpn_genconfig -u udp://localhost
-
+    cp /tmp/openvpn.template.conf /etc/openvpn/openvpn.conf
     echo "[+] Generando PKI..."
     EASYRSA_BATCH=1 ovpn_initpki nopass
 fi
