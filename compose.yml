@@ -202,7 +202,6 @@ services:
     ports:
       - "1194:1194/udp"
     volumes:
-      - ./vpn/openvpn.template.conf:/tmp/openvpn.template.conf
       - ovpndata:/etc/openvpn
       - ./vpn/start.sh:/start.sh
       - ./vpn/ovpn-data/clients:/etc/openvpn/clients
