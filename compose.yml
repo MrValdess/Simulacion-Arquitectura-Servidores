@@ -164,9 +164,8 @@ services:
       - USER_PASSWORD=supersecreto
       - LOG_STDOUT=true
     volumes:
-      - ./ssh/development/ssh1.config:/config/sshd_config
+      - ./ssh/development/sshdev.config:/config/sshd_config
       - ./ssh/development/start.sh:/custom-cont-init.d/start.sh
-      - ./ssh/development/authorized_keys:/config/ssh/authorized_keys
     networks:
       development_net:
         ipv4_address: 172.40.0.10   # IP fija dentro de la red de servicios
