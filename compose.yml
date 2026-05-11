@@ -132,9 +132,9 @@ services:
 #------------------------------------------------------------#
 
 # SSH WIP
-  ssh1:     #Por par de claves
+  sshServices:     #Por par de claves
     image: lscr.io/linuxserver/openssh-server:latest
-    container_name: openssh1-server
+    container_name: openssh-service
     environment:
       - PUID=1000
       - PGID=1000
@@ -145,30 +145,31 @@ services:
       - PASSWORD_ACCESS=false 
       - LOG_STDOUT=true
     volumes:
-      - ./ssh/development/ssh1.config:/config/sshd_config
-      - ./ssh/development/keys:/config/keys
+      - ./ssh/service/ssh1.config:/config/sshd_config
+      - ./ssh/service/keys:/config/keys
     networks:
-      development_net:
-        ipv4_address: 172.40.0.10
+      services_net:
+        ipv4_address: 172.20.0.10
     restart: unless-stopped
 
-  ssh2:     #Por login
+  sshDev:     #Por login
     image: lscr.io/linuxserver/openssh-server:latest
-    container_name: openssh2-server
+    container_name: openssh-Dev
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - USER_NAME=user2
+      - USER_NAME=userdev
       - PASSWORD_ACCESS=true
       - USER_PASSWORD=supersecreto
       - LOG_STDOUT=true
     volumes:
-      - ./ssh/service/ssh2.config:/config/sshd_config
-      - ./ssh/service/authorized_keys:/config/ssh/authorized_keys
+      - ./ssh/development/ssh1.config:/config/sshd_config
+      - ./ssh/development/start.sh:/custom-cont-init.d/start.sh
+      - ./ssh/development/authorized_keys:/config/ssh/authorized_keys
     networks:
-      services_net:
-        ipv4_address: 172.20.0.10   # IP fija dentro de la red de servicios
+      development_net:
+        ipv4_address: 172.40.0.10   # IP fija dentro de la red de servicios
     restart: unless-stopped   
   
 # Firewall 
@@ -193,7 +194,7 @@ services:
     command: sh -c "apk add --no-cache iptables-legacy iproute2 && sh /firewall.sh"
 
 #------------------------------------------------------------#
-# VPN WIP
+# VPN 
   openvpn:
     image: kylemanna/openvpn
     container_name: openvpn
