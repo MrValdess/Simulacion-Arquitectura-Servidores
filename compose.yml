@@ -147,6 +147,7 @@ services:
       - LOG_STDOUT=true
     volumes:
       - ./ssh/services/sshServ.config:/config/sshd_config
+      - ./ssh/services/startServ.sh:/custom-cont-init.d/start.sh
       - ./ssh/services/keys:/config/keys
     networks:
       services_net:
