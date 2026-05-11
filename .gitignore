@@ -3,4 +3,5 @@
 vpn/ovpn-data/crl.pem
 vpn/ovpn-data/ccd
 /vpn/ovpn-data
-/ssh/service/keys
+ssh/services/keys/id_rsa
+/ssh/services/keys

@@ -139,18 +139,20 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
+      - USER_NAME=userserv
       - PUBLIC_KEY_FILE=/config/keys/id_rsa.pub 
       - PUBLIC_KEY_DIR=/config/keys
       - SUDO_ACCESS=false
       - PASSWORD_ACCESS=false 
       - LOG_STDOUT=true
     volumes:
-      - ./ssh/service/ssh1.config:/config/sshd_config
-      - ./ssh/service/keys:/config/keys
+      - ./ssh/services/sshServ.config:/config/sshd_config
+      - ./ssh/services/keys:/config/keys
     networks:
       services_net:
         ipv4_address: 172.20.0.10
     restart: unless-stopped
+    # Cuando pida la passphrase en esa clave es Services
 
   sshDev:     #Por login
     image: lscr.io/linuxserver/openssh-server:latest
@@ -164,8 +166,8 @@ services:
       - USER_PASSWORD=supersecreto
       - LOG_STDOUT=true
     volumes:
-      - ./ssh/development/sshdev.config:/config/sshd_config
-      - ./ssh/development/start.sh:/custom-cont-init.d/start.sh
+      - ./ssh/development/sshDev.config:/config/sshd_config
+      - ./ssh/development/startDev.sh:/custom-cont-init.d/start.sh
     networks:
       development_net:
         ipv4_address: 172.40.0.10   # IP fija dentro de la red de servicios
