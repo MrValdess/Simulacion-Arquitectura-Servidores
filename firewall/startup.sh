@@ -1,81 +1,48 @@
 #!/bin/sh
 
-apk add --no-cache iptables iproute2
+apk add --no-cache iptables iproute2 bash
 
-echo "[+] Detectando interfaces..."
-
-DEV_NET="172.40.0.0/24"
-PROD_NET="172.30.0.0/24"
-SVC_NET="172.20.0.0/24"
-DNS_IP="172.20.0.6"
-VPN_NET="172.10.0.0/24"
-
-echo "[+] Limpiando reglas..."
-iptables -F
-iptables -t nat -F 2>/dev/null
-iptables -X 2>/dev/null
-
-echo "[+] Políticas por defecto..."
-iptables -P INPUT DROP
+echo "[*] Iniciando reglas de firewall..."
 iptables -P FORWARD DROP
+iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
 
-echo "[+] Loopback + conexiones establecidas..."
-iptables -A INPUT -i lo -j ACCEPT
-iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+echo "[+] Permitiendo tráfico ICMP..."
+iptables -A INPUT -p icmp -j ACCEPT
 
+echo "[*] Tráfico entre BDS y SVC..."
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.20.0.0/24 -p tcp -m multiport --dports 5432,3306 -j ACCEPT
+iptables -A FORWARD -s 172.40.0.0/24 -d 172.20.0.0/24 -p tcp -m multiport --dports 5432,3306 -j ACCEPT
 
-# Forward DNS 
-echo "[+] Permitir DNS hacia Bind9..."
-iptables -A FORWARD -s $DEV_NET -d $DNS_IP -p udp --dport 53 -j ACCEPT
-iptables -A FORWARD -s $DEV_NET -d $DNS_IP -p tcp --dport 53 -j ACCEPT
+echo "[*] Tráfico entre DEV y SVC..."
+iptables -A FORWARD -s 172.20.0.0/24 -d 172.40.0.0/24 -j ACCEPT
+iptables -A FORWARD -s 172.40.0.0/24 -d 172.20.0.0/24 -j ACCEPT
 
-iptables -A FORWARD -s $PROD_NET -d $DNS_IP -p udp --dport 53 -j ACCEPT
-iptables -A FORWARD -s $PROD_NET -d $DNS_IP -p tcp --dport 53 -j ACCEPT
+echo "[*] Tráfico entre PROD y DEV..."
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.40.0.0/24 -j ACCEPT
+iptables -A FORWARD -s 172.40.0.0/24 -d 172.30.0.0/24 -j ACCEPT
 
-# Retorno DNS
-iptables -A FORWARD -s $DNS_IP -d $DEV_NET -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-iptables -A FORWARD -s $DNS_IP -d $PROD_NET -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-iptables -A FORWARD -s $DEV_NET -d $SVC_NET -p tcp -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -s $PROD_NET -d $SVC_NET -p tcp -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -s $SVC_NET -d $DEV_NET -p tcp -m state --state ESTABLISHED,RELATED -j ACCEPT
-iptables -A FORWARD -s $SVC_NET -d $PROD_NET -p tcp -m state --state ESTABLISHED,RELATED -j ACCEPT
+echo "[*] Bloqueo entre PROD y SVC..."
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.20.0.0/24 -j DROP
+iptables -A FORWARD -s 172.20.0.0/24 -d 172.30.0.0/24 -j DROP
 
+echo "[*] Reglas de DNS..."
+iptables -A FORWARD -s 172.40.0.0/24 -d 172.20.0.6 -p udp --dport 53 -j ACCEPT
+iptables -A FORWARD -s 172.20.0.6 -d 172.40.0.0/24 -p udp --sport 53 -j ACCEPT
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.20.0.6 -p udp --dport 53 -j ACCEPT
+iptables -A FORWARD -s 172.20.0.6 -d 172.30.0.0/24 -p udp --sport 53 -j ACCEPT
 
-# Servicios
-echo "[+] Acceso a red de servicios..."
-iptables -A FORWARD -s $DEV_NET -d $SVC_NET -j ACCEPT
-iptables -A FORWARD -s $PROD_NET -d $SVC_NET -j ACCEPT
-iptables -A FORWARD -s $SVC_NET -d $DEV_NET -j ACCEPT
-iptables -A FORWARD -s $SVC_NET -d $PROD_NET -j ACCEPT
+echo "[*] Reglas de VPN..."
+# Usuario 1
+iptables -A FORWARD -s 172.10.0.100 -d 172.40.0.0/24 -j ACCEPT
+iptables -A FORWARD -s 172.40.0.0/24 -d 172.10.0.100 -j ACCEPT
 
+# Usuario 2
+iptables -A FORWARD -s 172.10.0.101 -d 172.30.0.0/24 -j ACCEPT
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.10.0.101 -j ACCEPT
 
-# Dev y Prod aislados
-echo "[+] Bloqueo DEV ↔ PROD..."
-iptables -A FORWARD -s $DEV_NET -d $PROD_NET -j DROP
-iptables -A FORWARD -s $PROD_NET -d $DEV_NET -j DROP
+iptables -L FORWARD -v --line-numbers
 
-# Internet
-echo "[+] Salida HTTP/HTTPS..."
-iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
-
-#VPN
-echo "[+] Reglas de VPN..."
-iptables -A FORWARD -s $VPN_NET -d $DEV_NET -j ACCEPT
-iptables -A FORWARD -s $VPN_NET -d $SVC_NET -j ACCEPT
-iptables -A FORWARD -s $VPN_NET -d $PROD_NET -j ACCEPT
-
-# Pruebas PING
-echo "[+] Permitir ICMP (ping para testing)..."
-iptables -A FORWARD -p icmp -j ACCEPT
-
-# Docker network
-echo "[+] Red interna Docker segura..."
-iptables -A FORWARD -s 172.0.0.0/8 -d 172.0.0.0/8 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-
-
-echo "[+] Firewall activo correctamente"
+echo "[+] Firewall activo"
 
 tail -f /dev/null
