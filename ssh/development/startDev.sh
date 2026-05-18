@@ -4,7 +4,11 @@ set -e
 
 echo "[INIT] Instalando dependencias de Google Authenticator..."
 
-apk add --no-cache google-authenticator 
+apk add --no-cache google-authenticator iproute2 iputils-ping
+
+echo "[INIT] Configurando rutas de red..."
+ip route del default 2>/dev/null
+ip route add default via 172.40.0.2
 
 echo "[INIT] Configurando PAM..."
 

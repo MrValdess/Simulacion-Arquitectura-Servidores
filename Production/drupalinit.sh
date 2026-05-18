@@ -2,7 +2,7 @@
 
 echo "Iniciando contenedor Drupal..."
 
-apt update && apt install -y unzip default-mysql-client
+apt update && apt install -y unzip default-mysql-client 
 
 # Crear proyecto Drupal si no existe
 if [ ! -d "/var/www/html/web" ]; then
@@ -17,6 +17,11 @@ else
 fi
 
 useradd -m -s /bin/bash johndoe
+
+
+# Configurando las rutas de red para el trafico
+ip route del default 2>/dev/null;
+ip route add default via 172.30.0.2 &&
 
 echo "Iniciando Apache..."
 exec apache2-foreground

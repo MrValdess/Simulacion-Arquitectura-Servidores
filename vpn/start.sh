@@ -3,6 +3,14 @@ set -e
 
 OVPN_DIR="/etc/openvpn"
 
+echo "[*] Instalando dependencias..."
+apk add --no-cache bash iproute2 iputils
+
+echo "[*] Configurando rutas de red..."
+
+ip route del default 2>/dev/null
+ip route add default via 172.10.0.2
+
 echo "[+] Iniciando contenedor OpenVPN..."
 
 # Inicialización 

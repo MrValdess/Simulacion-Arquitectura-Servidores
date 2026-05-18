@@ -2,8 +2,6 @@
 
 # Actualizar el sistema e instalar rsync si no está instalado
 echo "Actualizando el sistema e instalando rsync"
-apt update && apt install -y rsync
-apt install -y net-tools
 
 # Crear el archivo de configuración de rsync
 echo "Creando archivo de configuración de rsync..."
@@ -35,6 +33,10 @@ EOF
 # Cambiar los permisos del archivo de contraseñas para asegurar que solo root pueda leerlo
 chmod 600 /etc/rsyncd.secrets
 chmod -R 777 /backups
+
+# Configurando las rutas de red para el trafico
+ip route del default 2>/dev/null;
+ip route add default via 172.20.0.2 &&
 
 # Iniciar el servicio rsync de manera manual (sin usar systemd)
 echo "Iniciando rsync..."

@@ -4,8 +4,10 @@ apk add --no-cache iptables iproute2 bash
 
 echo "[*] Iniciando reglas de firewall..."
 iptables -P FORWARD DROP
+iptables -A FORWARD -i eth+ -o eth+ -j ACCEPT
 iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 echo "[+] Permitiendo tráfico ICMP..."
 iptables -A INPUT -p icmp -j ACCEPT
