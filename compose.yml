@@ -112,6 +112,8 @@ services:
     ports:
       - "873:873"
     tty: true
+    depends_on:
+      - bind9
 
   # DNS WIP
   bind9:

@@ -4,13 +4,15 @@ apk add --no-cache iptables iproute2 bash
 
 echo "[*] Iniciando reglas de firewall..."
 iptables -P FORWARD DROP
-iptables -A FORWARD -i eth+ -o eth+ -j ACCEPT
 iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
-echo "[+] Permitiendo tráfico ICMP..."
-iptables -A INPUT -p icmp -j ACCEPT
+echo "[*] Reglas de DNS..."
+iptables -A FORWARD -s 172.40.0.0/24 -d 172.20.0.6 -p udp --dport 53 -j ACCEPT
+iptables -A FORWARD -s 172.20.0.6 -d 172.40.0.0/24 -p udp --sport 53 -j ACCEPT
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.20.0.6 -p udp --dport 53 -j ACCEPT
+iptables -A FORWARD -s 172.20.0.6 -d 172.30.0.0/24 -p udp --sport 53 -j ACCEPT
 
 echo "[*] Tráfico entre BDS y SVC..."
 iptables -A FORWARD -s 172.30.0.0/24 -d 172.20.0.0/24 -p tcp -m multiport --dports 5432,3306 -j ACCEPT
@@ -27,12 +29,6 @@ iptables -A FORWARD -s 172.40.0.0/24 -d 172.30.0.0/24 -j ACCEPT
 echo "[*] Bloqueo entre PROD y SVC..."
 iptables -A FORWARD -s 172.30.0.0/24 -d 172.20.0.0/24 -j DROP
 iptables -A FORWARD -s 172.20.0.0/24 -d 172.30.0.0/24 -j DROP
-
-echo "[*] Reglas de DNS..."
-iptables -A FORWARD -s 172.40.0.0/24 -d 172.20.0.6 -p udp --dport 53 -j ACCEPT
-iptables -A FORWARD -s 172.20.0.6 -d 172.40.0.0/24 -p udp --sport 53 -j ACCEPT
-iptables -A FORWARD -s 172.30.0.0/24 -d 172.20.0.6 -p udp --dport 53 -j ACCEPT
-iptables -A FORWARD -s 172.20.0.6 -d 172.30.0.0/24 -p udp --sport 53 -j ACCEPT
 
 echo "[*] Reglas de VPN..."
 # Usuario 1
