@@ -2,13 +2,6 @@
 
 set -e
 
-echo "[INIT] Instalando dependencias..."
-apk add --no-cache iproute2 iputils-ping
-
-echo "[INIT] Configurando rutas de red..."
-ip route del default 2>/dev/null
-ip route add default via 172.20.0.2
-
 KEY_DIR="/config/keys"
 PRIVATE_KEY="$KEY_DIR/id_rsa"
 PUBLIC_KEY="$KEY_DIR/id_rsa.pub"

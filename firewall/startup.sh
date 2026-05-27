@@ -6,7 +6,6 @@ echo "[*] Iniciando reglas de firewall..."
 iptables -P FORWARD DROP
 iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 echo "[*] Reglas de DNS..."
 iptables -A FORWARD -s 172.40.0.0/24 -d 172.20.0.6 -p udp --dport 53 -j ACCEPT

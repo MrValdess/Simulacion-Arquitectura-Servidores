@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
 #DEV Drupal(Apache) + MySQL
   drupal:
@@ -90,15 +92,7 @@ services:
     image: debian:latest
     container_name: nasserv
     restart: always
-    cap_add:
-      - NET_ADMIN
-    command: >
-      bash -c "
-      apt update &&
-      apt install -y rsync net-tools iproute2 iputils-ping &&
-      
-      bash ./backups/startup.sh
-      "
+    command: bash ./backups/startup.sh
     environment:
       MYSQL_ROOT_PASSWORD: password           # Contraseña de MySQL
       POSTGRES_PASSWORD: postgrespassword         # Contraseña de PostgreSQL
@@ -111,6 +105,8 @@ services:
         ipv4_address: 172.20.0.5
     ports:
       - "873:873"
+    depends_on:
+      - bind9
     tty: true
     depends_on:
       - bind9
@@ -119,8 +115,6 @@ services:
   bind9:
     image: internetsystemsconsortium/bind9:9.20
     container_name: bind9
-    cap_add:
-      - NET_ADMIN
     restart: always
     ports:
       - "53:53/udp"
@@ -143,8 +137,6 @@ services:
   sshServices:     #Por par de claves
     image: lscr.io/linuxserver/openssh-server:latest
     container_name: openssh-service
-    cap_add:
-      - NET_ADMIN
     environment:
       - PUID=1000
       - PGID=1000
@@ -168,8 +160,6 @@ services:
   sshDev:     #Por login
     image: lscr.io/linuxserver/openssh-server:latest
     container_name: openssh-Dev
-    cap_add:
-      - NET_ADMIN
     environment:
       - PUID=1000
       - PGID=1000
@@ -200,13 +190,13 @@ services:
       - ./firewall/startup.sh:/firewall.sh
     networks:
       development_net:
-        ipv4_address: 172.40.0.2
+        ipv4_address: 172.40.0.15
       production_net:
-        ipv4_address: 172.30.0.2
+        ipv4_address: 172.30.0.15
       services_net:
-        ipv4_address: 172.20.0.2
+        ipv4_address: 172.20.0.15
       vpn_net:
-        ipv4_address: 172.10.0.2
+        ipv4_address: 172.10.0.15
     command: sh -c "sh /firewall.sh"
 
 #------------------------------------------------------------#
