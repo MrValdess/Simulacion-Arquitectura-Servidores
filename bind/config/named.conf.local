@@ -1,35 +1,9 @@
-// Zona directa para prod.local
-zone "prod.local" {
-    type master;
-    file "/etc/bind/zones/db.prod.local";
+zone "empresa.local" {
+type master;
+file "/etc/bind/zones/db.empresa.local";
 };
 
-// Zona inversa para 172.30.0.0/24
-zone "0.30.172.in-addr.arpa" {
-    type master;
-    file "/etc/bind/zones/db.172.30.0";
-};
-
-// Zona directa para dev.local
-zone "dev.local" {
-    type master;
-    file "/etc/bind/zones/db.dev.local";
-};
-
-// Zona inversa para 172.40.0.0/24
-zone "0.40.172.in-addr.arpa" {
-    type master;
-    file "/etc/bind/zones/db.172.40.0";
-};
-
-// Zona directa para svc.local (para storage.svc.local y el DNS)
-zone "svc.local" {
-    type master;
-    file "/etc/bind/zones/db.svc.local";
-};
-
-// Zona inversa para 172.20.0.0/24
-zone "0.20.172.in-addr.arpa" {
-    type master;
-    file "/etc/bind/zones/db.172.20.0";
+zone "20.172.in-addr.arpa" {
+type master;
+file "/etc/bind/zones/db.172.20";
 };
