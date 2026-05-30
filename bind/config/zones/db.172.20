@@ -1,0 +1,12 @@
+$TTL 86400
+@ IN SOA dns.empresa.local. admin.empresa.local. (
+2026030401
+3600
+1800
+604800
+86400 )
+
+@ IN NS dns.empresa.local.
+
+5 IN PTR dns.empresa.local.
+6 IN PTR nas.empresa.local.

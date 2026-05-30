@@ -51,10 +51,6 @@ services:
       - prodData:/app
     ports:
       - 8081:80
-    extra_hosts:
-      - "prod.local:172.30.0.5"
-      - "ns1.svc.local:172.20.0.6"
-      - "svc.local:172.20.0.6"
     networks:
       production_net:
         ipv4_address: 172.30.0.5
