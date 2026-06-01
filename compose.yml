@@ -8,6 +8,8 @@ services:
     restart: always
     volumes:
       - devData:/var/www/html/
+      - ./drupal/drupalinit.sh:/init.sh
+    entrypoint: ["/bin/bash", "/init.sh"]
     ports:
       - 8080:80
     dns_search:
@@ -96,7 +98,7 @@ services:
     tty: true
 
 
-  # DNS WIP
+  # DNS 
   bind9:
     image: internetsystemsconsortium/bind9:9.20
     container_name: bind9
@@ -121,7 +123,7 @@ services:
 
 #------------------------------------------------------------#
 
-# SSH WIP
+# SSH
   sshServices:     #Por par de claves
     image: lscr.io/linuxserver/openssh-server:latest
     container_name: openssh-service
@@ -209,6 +211,22 @@ services:
       vpn_net:
         ipv4_address: 172.10.0.100
 
+  #Samba 
+  samba:
+    image: dperson/samba
+    container_name: samba_server
+    restart: always
+    networks:
+      development_net:
+        ipv4_address: 172.40.0.20
+
+    volumes:
+      - ./samba/SambaInit.sh:/init.sh
+      - samba_data:/mount
+
+    command: ["/bin/sh", "/init.sh"]
+  # FTP WIP
+
 #------------------------------------------------------------#
 
 networks:
@@ -243,3 +261,4 @@ volumes:
   dnscache:
   dnslogs:
   ovpndata:
+  samba_data:
