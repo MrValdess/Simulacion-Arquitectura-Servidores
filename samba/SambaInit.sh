@@ -15,10 +15,19 @@ done
 
 echo "Estructura creada"
 
-# Permisos simples (NO usuarios Linux)
+# Permisos desarrollo (aislamiento por share)
 chmod -R 0775 /mount/desarrollo
+
+# revisión (todos pueden escribir)
 chmod -R 0770 /mount/revision
-chmod -R 0555 /mount/publico
+
+# público (lectura general)
+chmod -R 0755 /mount/publico
+
+chmod -R a-w /mount/publico
+if command -v setfacl >/dev/null 2>&1; then
+  setfacl -R -m u:revisor:rwx /mount/publico
+fi
 
 echo "Permisos aplicados"
 
@@ -36,5 +45,5 @@ exec samba.sh \
   -s "SW4;/mount/desarrollo/SW4;yes;no;no;empleado4" \
   -s "SW5;/mount/desarrollo/SW5;yes;no;no;empleado5" \
   -s "revision;/mount/revision;yes;no;no;empleado1,empleado2,empleado3,empleado4,empleado5,revisor" \
-  -s "publico;/mount/publico;yes;no;no;empleado1,empleado2,empleado3,empleado4,empleado5,revisor" \
+  -s "publico;/mount/publico;yes;yes;no;empleado1,empleado2,empleado3,empleado4,empleado5,revisor;;revisor" \
   -p
