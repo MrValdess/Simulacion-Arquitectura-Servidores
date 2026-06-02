@@ -44,6 +44,6 @@ exec samba.sh \
   -s "SW3;/mount/desarrollo/SW3;yes;no;no;empleado3" \
   -s "SW4;/mount/desarrollo/SW4;yes;no;no;empleado4" \
   -s "SW5;/mount/desarrollo/SW5;yes;no;no;empleado5" \
-  -s "revision;/mount/revision;yes;no;no;empleado1,empleado2,empleado3,empleado4,empleado5,revisor" \
+  -s "revision;/mount/revision;yes;no;no;empleado1,empleado2,empleado3,empleado4,empleado5,revisor;revisor;revisor" \
   -s "publico;/mount/publico;yes;yes;no;empleado1,empleado2,empleado3,empleado4,empleado5,revisor;;revisor" \
   -p

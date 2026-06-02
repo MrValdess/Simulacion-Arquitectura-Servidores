@@ -21,6 +21,13 @@ echo "[*] Tráfico entre DEV y SVC..."
 iptables -A FORWARD -s 172.20.0.0/24 -d 172.40.0.0/24 -j ACCEPT
 iptables -A FORWARD -s 172.40.0.0/24 -d 172.20.0.0/24 -j ACCEPT
 
+echo "[*] Bloqueo FTP entre PROD y DEV..."
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.40.0.21 -p tcp --dport 20 -j DROP
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.40.0.21 -p tcp --dport 21 -j DROP
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.40.0.21 -p tcp --dport 30000 -j DROP
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.40.0.21 -p tcp --dport 989 -j DROP
+iptables -A FORWARD -s 172.30.0.0/24 -d 172.40.0.21 -p tcp --dport 990 -j DROP
+
 echo "[*] Tráfico entre PROD y DEV..."
 iptables -A FORWARD -s 172.30.0.0/24 -d 172.40.0.0/24 -j ACCEPT
 iptables -A FORWARD -s 172.40.0.0/24 -d 172.30.0.0/24 -j ACCEPT

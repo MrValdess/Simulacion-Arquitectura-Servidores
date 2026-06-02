@@ -225,7 +225,22 @@ services:
       - samba_data:/mount
 
     command: ["/bin/sh", "/init.sh"]
-  # FTP WIP
+    
+  # FTP 
+  ftp-server:
+    image: debian:12
+    container_name: ftp_server
+    restart: always
+    volumes:
+      - samba_data:/ftp
+      - ./ftp/startftp.sh:/start.sh
+    command: bash /start.sh
+    ports:
+      - "21:21"
+      - "30000:30000"
+    networks:
+      development_net:
+        ipv4_address: 172.40.0.21
 
 #------------------------------------------------------------#
 
