@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Instalando dependencias de Drupal..."
+echo "Instalando dependencias de Apache..."
 
 apt update && apt install -y smbclient ftp
 
@@ -18,6 +18,6 @@ htpasswd -bc /etc/apache2/.htpasswd documentos 'GraTiS!'
 apache2ctl configtest
 apache2ctl restart
 
-echo "Iniciando Drupal..."
+echo "Iniciando Apache..."
 
 exec apache2-foreground
