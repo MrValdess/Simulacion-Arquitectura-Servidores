@@ -5,3 +5,4 @@ vpn/ovpn-data/ccd
 /vpn/ovpn-data
 ssh/services/keys/id_rsa
 /ssh/services/keys
+guion.txt

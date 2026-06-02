@@ -19,3 +19,5 @@ prod-postgres IN A 172.30.0.8
 ; --- Development Network (172.40.0.0/24) ---
 dev-web IN A 172.40.0.5
 dev-mysql IN A 172.40.0.6
+www         IN A 172.40.0.5
+intranet    IN A 172.40.0.5

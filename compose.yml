@@ -1,30 +1,24 @@
 version: '3.8'
 
 services:
-#DEV Drupal(Apache) + MySQL
-  drupal:
-    image: drupal:10-apache
-    container_name: drupal_dev
+#DEV Apache + MySQL
+  apache:
+    image: php:8.2-apache
+    container_name: apache_web
     restart: always
     volumes:
-      - devData:/var/www/html/
-      - ./drupal/drupalinit.sh:/init.sh
+      - ./apache/web:/var/www/html
+      - ./apache/sites:/etc/apache2/sites-available
+      - ./apache/apacheinit.sh:/init.sh
+      - samba_data:/documentacion
     entrypoint: ["/bin/bash", "/init.sh"]
     ports:
-      - 8080:80
-    dns_search:
-      - svc.local
-      - dev.local
+      - "8080:80"
+    depends_on:
+      - mysql
     networks:
       development_net:
         ipv4_address: 172.40.0.5
-    depends_on:
-      - mysql
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.drupal.rule=Host(`dev.localhost`)"
-      - "traefik.http.routers.drupal.service=drupal"
-      - "traefik.http.services.drupal.loadbalancer.server.port=80"
 
   mysql:
     image: mysql
@@ -33,8 +27,8 @@ services:
     volumes:
       - devdb:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: drupal
-      MYSQL_USER: drupal
+      MYSQL_DATABASE: apache
+      MYSQL_USER: apache
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: password
     networks:
@@ -43,7 +37,7 @@ services:
 
 #------------------------------------------------------------#
 
-#WIP PROD NGINX + POSTGRES
+#PROD NGINX + POSTGRES
   nginxProd:
     image: 'bitnami/nginx:latest'
     container_name: nginxprod
@@ -67,8 +61,8 @@ services:
     volumes:
       - proddb:/bitnami/postgresql
     environment:
-      - POSTGRESQL_DATABASE=drupal
-      - POSTGRESQL_USERNAME=drupal
+      - POSTGRESQL_DATABASE=nginx
+      - POSTGRESQL_USERNAME=nginx
       - POSTGRESQL_PASSWORD=password
     networks:
       production_net:
@@ -225,7 +219,7 @@ services:
       - samba_data:/mount
 
     command: ["/bin/sh", "/init.sh"]
-    
+
   # FTP 
   ftp-server:
     image: debian:12
