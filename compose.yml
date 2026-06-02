@@ -12,10 +12,10 @@ services:
       - ./apache/apacheinit.sh:/init.sh
       - samba_data:/documentacion
     entrypoint: ["/bin/bash", "/init.sh"]
+    dns:
+      - 172.20.0.6
     ports:
       - "8080:80"
-    depends_on:
-      - mysql
     networks:
       development_net:
         ipv4_address: 172.40.0.5
@@ -111,8 +111,6 @@ services:
     networks:
       services_net:
         ipv4_address: 172.20.0.6
-      development_net:
-      production_net:
 
 
 #------------------------------------------------------------#
