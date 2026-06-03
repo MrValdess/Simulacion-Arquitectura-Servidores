@@ -258,6 +258,43 @@ networks:
       config:
         - subnet: 172.10.0.0/24
 
+  
+  #Contenedor de pruebas para todos los servicios
+  testcontainer:
+    image: debian:12
+    container_name: testcontainer
+    restart: always
+    dns:
+      - 172.20.0.6
+    command: >
+      bash -c "
+      apt update &&
+      apt install -y
+      dnsutils
+      curl
+      ftp
+      smbclient
+      openssh-client
+      telnet
+      netcat-openbsd
+      mailutils
+      iputils-ping
+      traceroute
+      nano
+      vim 
+      swaks 
+      rsync &&
+      echo 'Cliente listo' &&
+      tail -f /dev/null
+      "
+    networks:
+      services_net:
+        ipv4_address: 172.20.0.50
+      development_net:
+        ipv4_address: 172.40.0.50
+      production_net:
+        ipv4_address: 172.30.0.50
+
 #------------------------------------------------------------#
 
 volumes:

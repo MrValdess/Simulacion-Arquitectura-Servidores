@@ -12,6 +12,9 @@ $TTL 86400
 dns         IN A 172.20.0.6
 nas         IN A 172.20.0.5
 sshserv     IN A 172.20.0.10
+mail        IN A 172.20.0.30
+
+@ IN MX 10 mail.empresa.local.
 
 ; --- Production Network (172.30.0.0/24) ---
 prod-web      IN A 172.30.0.5
