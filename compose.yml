@@ -234,31 +234,24 @@ services:
       development_net:
         ipv4_address: 172.40.0.21
 
-#------------------------------------------------------------#
+  #Correo SMPT + IMAP
+  mailserver:
+    image: debian:12
+    container_name: correo
+    restart: always
+    hostname: mail
+    volumes:
+      - ./correo/startcorreo.sh:/start.sh
+      - correoData:/var/mail
+    command: bash /start.sh
+    ports:
+      - "25:25"
+      - "143:143"
+    networks:
+      services_net:
+        ipv4_address: 172.20.0.30
 
-networks:
-  services_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/24
-  production_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.30.0.0/24
-  development_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.40.0.0/24
-  vpn_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.10.0.0/24
 
-  
   #Contenedor de pruebas para todos los servicios
   testcontainer:
     image: debian:12
@@ -294,6 +287,30 @@ networks:
         ipv4_address: 172.40.0.50
       production_net:
         ipv4_address: 172.30.0.50
+
+#------------------------------------------------------------#
+
+networks:
+  services_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+  production_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+  development_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.40.0.0/24
+  vpn_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.10.0.0/24
 
 #------------------------------------------------------------#
 
