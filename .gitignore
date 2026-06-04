@@ -7,3 +7,4 @@ ssh/services/keys/id_rsa
 guion.txt
 /nas_data/backups
 /nas_data/logs
+/bind/logs

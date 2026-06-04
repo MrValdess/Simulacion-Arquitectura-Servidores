@@ -43,7 +43,6 @@ services:
     container_name: nginxprod
     restart: always
     volumes:
-      - ./Production/server-block.conf:/opt/bitnami/nginx/conf/server_blocks/server-block.conf  # Configuración de Nginx
       - prodData:/app
     ports:
       - 8081:80
@@ -290,7 +289,7 @@ services:
       production_net:
         ipv4_address: 172.30.0.50
       vpn_net:
-        ipv4_address: 172.30.0.50
+        ipv4_address: 172.10.0.50
 
 #------------------------------------------------------------#
 
@@ -327,3 +326,4 @@ volumes:
   dnslogs:
   ovpndata:
   samba_data:
+  correoData:
