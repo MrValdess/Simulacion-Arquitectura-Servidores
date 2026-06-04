@@ -55,15 +55,15 @@ services:
 
 
   postgresql:
-    image: 'bitnami/postgresql:latest'
+    image: postgres:17
     container_name: postgresql
     restart: always
-    volumes:
-      - proddb:/bitnami/postgresql
     environment:
-      - POSTGRESQL_DATABASE=nginx
-      - POSTGRESQL_USERNAME=nginx
-      - POSTGRESQL_PASSWORD=password
+      POSTGRES_DB: nginx
+      POSTGRES_USER: nginx
+      POSTGRES_PASSWORD: password
+    volumes:
+      - proddb:/var/lib/postgresql/data
     networks:
       production_net:
         ipv4_address: 172.30.0.8
@@ -76,11 +76,13 @@ services:
     image: debian:latest
     container_name: nasserv
     restart: always
-    command: bash ./backups/startup.sh
+    command: bash ./startup.sh
     environment:
       MYSQL_ROOT_PASSWORD: password           # Contraseña de MySQL
       POSTGRES_PASSWORD: postgrespassword         # Contraseña de PostgreSQL
     volumes:
+      - ./nas_data/cron/backup-cron:/etc/cron.d/backup-cron
+      - ./nas_data/startup.sh:/startup.sh
       - ./nas_data/backups:/backups               # Monta el directorio de copias de seguridad
     networks:
       services_net:
@@ -286,6 +288,8 @@ services:
       development_net:
         ipv4_address: 172.40.0.50
       production_net:
+        ipv4_address: 172.30.0.50
+      vpn_net:
         ipv4_address: 172.30.0.50
 
 #------------------------------------------------------------#
