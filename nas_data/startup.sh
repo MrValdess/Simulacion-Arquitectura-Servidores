@@ -2,8 +2,15 @@
 
 # Actualizar el sistema e instalar rsync si no está instalado
 echo "Actualizando el sistema e instalando rsync"
-apt update && apt install -y rsync
-apt install -y net-tools
+apt update && apt install -y rsync net-tools mariadb-client-compat postgresql-client cron nano
+
+
+echo "[*] Iniciando cron..."
+
+chmod 0644 /etc/cron.d/backup-cron
+crontab /etc/cron.d/backup-cron
+
+service cron start
 
 # Crear el archivo de configuración de rsync
 echo "Creando archivo de configuración de rsync..."
