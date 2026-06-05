@@ -8,7 +8,5 @@ $TTL 86400
 
 @ IN NS dns.empresa.local.
 
-5 IN PTR dns.empresa.local.
-6 IN PTR nas.empresa.local.
-10 IN PTR sshserv.empresa.local.
-30 IN PTR mail.empresa.local.
+5 IN PTR prod-web.empresa.local.
+8 IN PTR prod-postgres.empresa.local.

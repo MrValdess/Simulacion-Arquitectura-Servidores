@@ -7,3 +7,13 @@ zone "20.172.in-addr.arpa" {
 type master;
 file "/etc/bind/zones/db.172.20";
 };
+
+zone "30.172.in-addr.arpa" {
+type master;
+file "/etc/bind/zones/db.172.30";
+};
+
+zone "40.172.in-addr.arpa" {
+type master;
+file "/etc/bind/zones/db.172.40";
+};
