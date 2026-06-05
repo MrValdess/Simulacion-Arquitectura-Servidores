@@ -10,5 +10,3 @@ $TTL 86400
 
 5 IN PTR dns.empresa.local.
 6 IN PTR nas.empresa.local.
-10 IN PTR sshserv.empresa.local.
-30 IN PTR mail.empresa.local.

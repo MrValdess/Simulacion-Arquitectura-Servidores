@@ -1,6 +1,6 @@
 # Simulación de Arquitectura de Servidores en una empresa
 
-Este proyecto de la asignatura Administración de Servidores simula una infraestructura completa de servicios en red
+Este proyecto simula una infraestructura completa de servicios en red
 utilizando **Docker Compose**, con segmentación de redes, servicios de
 producción y desarrollo, y un sistema de backups automatizado.
 
