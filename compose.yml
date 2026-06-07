@@ -258,8 +258,6 @@ services:
     image: debian:12
     container_name: testcontainer
     restart: always
-    dns:
-      - 172.20.0.6
     command: >
       bash -c "
       apt update &&
