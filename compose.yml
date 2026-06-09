@@ -156,7 +156,7 @@ services:
       - ./ssh/development/startDev.sh:/custom-cont-init.d/start.sh
     networks:
       development_net:
-        ipv4_address: 172.40.0.10   # IP fija dentro de la red de servicios
+        ipv4_address: 172.40.0.10   
     restart: unless-stopped   
   
 # Firewall 
